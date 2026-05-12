@@ -13,8 +13,12 @@ const backgroundMusic = "/fani_ellie-goulding-love-me-like-you-do-mp3.mp3";
 
 const flowerImage = "/silver_orchid.png";
 const flowerCornerImage = "/silver_orchid_corner.png";
-const flowerArchImage = "/silver_orchid_arch.png";
 const brideGroomImage = "/images/10.png";
+const heroArchImage = "/r.png";
+const coupleImage1 = "/DSC02072.jpg.jpeg";
+const coupleImage2 = "/DSC02128.jpg.jpeg";
+
+
 
 type InviteImageProps = React.ComponentProps<"img"> & {
   eager?: boolean;
@@ -312,8 +316,8 @@ export default function WeddingInvitation() {
         } relative font-montserrat scroll-smooth`}
     >
       <audio ref={audioRef} src={backgroundMusic} loop />
-      <MandalaFrame minimal={isLowPerformanceMode} />
       <FloatingPetals disabled={isLowPerformanceMode} />
+
 
       <AnimatePresence mode="wait">
         {!isOpened ? (
@@ -437,83 +441,95 @@ export default function WeddingInvitation() {
 
             {/* Hero Section */}
             <section className="min-h-[100dvh] w-full flex items-center justify-center p-4 md:p-12 relative overflow-hidden bg-[#FFFFFF]">
-              {/* Background texture */}
-              <div className="absolute inset-0 opacity-[0.03] paper-grain" />
-
-              {/* Large Watermark Monogram */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 0.03, scale: 1 }}
-                transition={{ duration: 2, ease: "easeOut" }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-cinzel text-[40vw] text-theme-900 pointer-events-none whitespace-nowrap leading-none select-none z-0"
-              >
-                S&N
-              </motion.div>
 
               {/* Central Premium Arch Card */}
+
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, delay: 0.2, ease: [0.25, 1, 0.5, 1] }}
-                className="relative z-10 w-full max-w-[420px] min-h-[500px] h-[85vh] md:h-[80vh] bg-[#ffffff] rounded-t-full shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] border border-theme-100 flex flex-col items-center overflow-hidden p-6 pt-12 md:p-10 md:pt-16"
+                className="relative z-10 w-full max-w-[420px] h-[85dvh] md:h-[80vh] bg-[#ffffff] rounded-t-full shadow-[0_20px_80px_-15px_rgba(212,45,86,0.2)] border-[6px] border-white ring-2 ring-theme-200/50 flex flex-col items-center overflow-hidden p-6 pt-48 md:p-10 md:pt-20"
               >
-                {/* Arch outline decoration */}
-                <div className="absolute inset-3 sm:inset-5 border-[2px] border-theme-400/50 rounded-t-full pointer-events-none" />
-                <div className="absolute inset-4 sm:inset-6 border-[1px] border-theme-200/40 rounded-t-full pointer-events-none" />
-
-                {/* Top Circle Arch Floral Arrangement */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] h-auto z-20 pointer-events-none -translate-y-12">
-                  <motion.img
-                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ duration: 1.5, delay: 0.8 }}
-                    src={flowerArchImage}
-                    alt=""
-                    className="w-full h-auto object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.15)]"
+                {/* Background Image for Arch */}
+                <div className="absolute inset-0 z-0">
+                  <InviteImage
+                    src={heroArchImage}
+                    className="w-full h-full object-cover"
+                    eager
                   />
+                  <div className="absolute inset-0 bg-white/5" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-white/90" />
                 </div>
 
-                <div className="mb-10" />
+                {/* Arch outline decoration */}
+                <div className="absolute inset-2 sm:inset-3 border-[1px] border-theme-300/30 rounded-t-full pointer-events-none" />
+
+                <div className="absolute inset-3 sm:inset-4 border-[1px] border-theme-100/20 rounded-t-full pointer-events-none" />
+
+
+
+
 
                 <div className="flex flex-col items-center text-center space-y-4 flex-1 w-full relative z-10">
-                  <div className="mb-4" />
+
+                  <div className="mb-24 md:mb-4" />
+
+
+
 
                   <div className="space-y-0 py-4 flex-1 flex flex-col justify-center">
                     <motion.h1
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 1, duration: 0.8 }}
-                      className="font-playball text-[3rem] sm:text-[3.5rem] md:text-[5rem] text-stone-800 leading-[1.1] drop-shadow-sm"
+                      className="font-playball text-[2.5rem] sm:text-[3.5rem] md:text-[5.5rem] text-[#f08998] leading-[0.8] drop-shadow-md"
+                      style={{ WebkitTextStroke: '1px #631124', paintOrder: 'stroke fill' }}
                     >
                       Sandun
                     </motion.h1>
+
+
+
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 1.2, duration: 0.5 }}
-                      className="font-playball text-3xl md:text-5xl text-theme-500 italic font-light my-2 md:my-4 tracking-widest"
+                      className="font-playball text-2xl md:text-5xl text-[#f08998] italic font-light my-1 md:my-2 tracking-widest"
+                      style={{ WebkitTextStroke: '0.8px #631124', paintOrder: 'stroke fill' }}
                     >
                       &
                     </motion.div>
                     <motion.h1
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 1.4, duration: 0.8 }}
-                      className="font-playball text-[3rem] sm:text-[3.5rem] md:text-[5rem] text-stone-800 leading-[1.1] drop-shadow-sm"
+                      className="font-playball text-[2.5rem] sm:text-[3.5rem] md:text-[5.5rem] text-[#f08998] leading-[0.8] drop-shadow-md"
+                      style={{ WebkitTextStroke: '1px #631124', paintOrder: 'stroke fill' }}
                     >
                       Nawodani
                     </motion.h1>
+
+
+
+
+                    <div className="flex items-center justify-center gap-3 my-4 opacity-60">
+                      <div className="h-[0.5px] w-8 bg-gradient-to-r from-transparent to-theme-500" />
+                      <div className="w-1 h-1 rotate-45 bg-theme-600" />
+                      <div className="h-[0.5px] w-8 bg-gradient-to-l from-transparent to-theme-500" />
+                    </div>
 
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 1.8, duration: 1 }}
-                      className="mt-6 md:mt-10"
+                      className="mt-10 md:mt-4"
+
                     >
-                      <span className="inline-block text-[10px] md:text-[13px] uppercase tracking-[0.6em] md:tracking-[0.8em] text-zinc-800 font-bold px-5 py-2 rounded-full bg-theme-100/40 border border-theme-200/30">
+                      <span className="inline-block text-[8px] md:text-[11px] uppercase tracking-[0.5em] text-theme-700 font-bold px-8 py-2 md:px-10 md:py-3 rounded-full bg-theme-50 border-2 border-theme-200 shadow-sm">
                         Please join us
                       </span>
                     </motion.div>
+
                   </div>
 
                   <motion.div
@@ -528,9 +544,16 @@ export default function WeddingInvitation() {
                       <div className="h-px w-full bg-gradient-to-l from-transparent via-theme-300 to-theme-400" />
                     </div>
                     <div className="font-cinzel space-y-1">
-                      <p className="text-sm md:text-base text-stone-700 tracking-[0.2em] md:tracking-[0.3em] font-bold">2026.06.11</p>
-                      <p className="text-[8px] md:text-[9px] text-theme-600 tracking-[0.2em] uppercase font-bold">MOUNTS EDGE REGENCY</p>
+                      <p className="text-[10px] text-theme-500 tracking-[0.4em] font-bold">2026</p>
+                      <div className="flex items-center justify-center gap-4">
+                        <span className="text-3xl md:text-4xl text-theme-700 font-bold tracking-tight">06</span>
+                        <div className="h-8 w-[1.5px] bg-theme-400" />
+                        <span className="text-3xl md:text-4xl text-theme-700 font-bold tracking-tight">11</span>
+                      </div>
+
+                      <p className="text-[9px] md:text-[10px] text-theme-500 tracking-[0.4em] uppercase font-bold mt-2">MOUNTS EDGE REGENCY</p>
                     </div>
+
                   </motion.div>
                 </div>
               </motion.div>
@@ -726,8 +749,67 @@ export default function WeddingInvitation() {
               </div>
             </section>
 
+            {/* Captured Moments Section */}
+            <section className="cv-auto py-24 md:py-36 bg-white relative overflow-hidden flex flex-col items-center">
+              <div className="container mx-auto px-4 max-w-5xl relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="flex flex-col items-center mb-16 md:mb-24 text-center"
+                >
+                  <p className="text-[10px] md:text-[12px] uppercase tracking-[0.6em] md:tracking-[0.8em] text-theme-500 font-bold mb-4">Our Memories</p>
+                  <h2 className="font-playball text-[3.5rem] md:text-[5.5rem] text-theme-900 leading-none drop-shadow-sm">Captured Moments</h2>
+                  <div className="w-16 h-1 bg-theme-200 mt-6 rounded-full" />
+                </motion.div>
+
+                <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+                  {/* Image 1 - Arched Frame */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="relative"
+                  >
+                    <div className="relative aspect-[3/4] rounded-t-full overflow-hidden shadow-[0_30px_60px_-15px_rgba(212,45,86,0.25)] border-[10px] border-white ring-1 ring-theme-100 group">
+                      <InviteImage
+                        src={coupleImage1}
+                        className="w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-theme-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                    </div>
+
+                  </motion.div>
+
+                  {/* Image 2 - Offset Arched Frame */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                    className="relative md:mt-32"
+                  >
+                    <div className="relative aspect-[3/4] rounded-t-full overflow-hidden shadow-[0_30px_60px_-15px_rgba(212,45,86,0.25)] border-[10px] border-white ring-1 ring-theme-100 group">
+                      <InviteImage
+                        src={coupleImage2}
+                        className="w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-theme-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                    </div>
+
+                  </motion.div>
+                </div>
+              </div>
+
+              {/* Background Accents */}
+              <div className="absolute top-1/2 left-0 w-64 h-64 bg-theme-50 blur-[100px] rounded-full opacity-50 -translate-x-1/2" />
+              <div className="absolute bottom-0 right-0 w-96 h-96 bg-theme-100 blur-[120px] rounded-full opacity-30 translate-x-1/3" />
+            </section>
+
             {/* Countdown Section */}
             <section className="cv-auto py-24 md:py-36 bg-[#F9FAFB] relative border-y border-theme-100/30 flex flex-col items-center overflow-hidden">
+
               {/* Premium Background Elements */}
               <div className="absolute inset-0 opacity-[0.03] paper-grain pointer-events-none" />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] aspect-square bg-theme-100 blur-[120px] rounded-full opacity-30 pointer-events-none" />
