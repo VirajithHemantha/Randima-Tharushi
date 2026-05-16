@@ -211,13 +211,207 @@ function CountdownTimer() {
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTXHkYe80YoqbFO6w6TRXMfLMa7RcIOPNUGfmdTQwcYTbq5M3NCeoHhtdOSiiRjSzp/exec";
 
+function AdminPage() {
+  const [title, setTitle] = useState("Mr.");
+  const [guestName, setGuestName] = useState("");
+  const [generatedLink, setGeneratedLink] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleGenerate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!guestName.trim()) {
+      alert("Please enter an invitee name.");
+      return;
+    }
+    const baseUrl = window.location.origin;
+    const params = new URLSearchParams();
+    if (title) params.append("title", title);
+    params.append("guest", guestName.trim());
+
+    setGeneratedLink(`${baseUrl}/?${params.toString()}`);
+    setIsCopied(false);
+  };
+
+  const copyToClipboard = () => {
+    if (!generatedLink) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(generatedLink).then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2500);
+      }).catch((err) => {
+        console.error("Clipboard copy failed", err);
+        fallbackCopy(generatedLink);
+      });
+    } else {
+      fallbackCopy(generatedLink);
+    }
+  };
+
+  const fallbackCopy = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2500);
+    } catch (err) {
+      console.error('Fallback copy error', err);
+      alert("Failed to copy link. Please select and copy the text manually.");
+    }
+    document.body.removeChild(textArea);
+  };
+
+  return (
+    <main className="min-h-[100dvh] w-full bg-[#fcf9fb] flex flex-col items-center justify-center p-4 sm:p-6 font-montserrat overflow-y-auto smooth-mobile-scroll relative">
+      <div className="absolute inset-0 opacity-10 paper-grain pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-theme-200 blur-[150px] rounded-full opacity-20 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-theme-300 blur-[150px] rounded-full opacity-20 pointer-events-none" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 w-full max-w-xl bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-theme-200 shadow-[0_20px_50px_-10px_rgba(156,80,138,0.15)] my-8"
+      >
+        <div className="text-center mb-8">
+          <p className="text-[10px] md:text-[12px] uppercase tracking-[0.6em] text-theme-500 font-bold mb-2">Invitation Portal</p>
+          <h1 className="font-playball text-4xl sm:text-5xl text-theme-900 drop-shadow-sm">Admin Generator</h1>
+          <div className="h-px w-24 bg-gradient-to-r from-transparent via-theme-400 to-transparent mx-auto mt-4 opacity-60" />
+        </div>
+
+        <form onSubmit={handleGenerate} className="space-y-6 text-left">
+          <div className="space-y-3">
+            <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-600 ml-2 block">
+              1. Select Title / Prefix
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "Mr.", value: "Mr." },
+                { label: "Mrs.", value: "Mrs." },
+                { label: "Mr. & Mrs.", value: "Mr. & Mrs." },
+                { label: "Family of", value: "Family of" },
+              ].map((item) => (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => setTitle(item.value)}
+                  className={`py-3 px-2 rounded-2xl border text-xs sm:text-sm font-cinzel font-bold transition-all ${
+                    title === item.value
+                      ? "bg-theme-800 text-white border-theme-800 shadow-lg shadow-theme-800/20"
+                      : "bg-stone-50 text-stone-600 border-stone-200 hover:border-theme-300"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-600 ml-2 block">
+              2. Invitee Name
+            </label>
+            <input
+              type="text"
+              required
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="e.g. John Doe"
+              className="w-full bg-stone-50 border border-stone-200 rounded-2xl px-4 py-4 text-theme-900 placeholder:text-stone-400 focus:outline-none focus:border-theme-500 focus:bg-white transition-all font-cinzel text-lg tracking-wide"
+            />
+          </div>
+
+          <div className="pt-4">
+            <button
+              type="submit"
+              className="w-full bg-theme-800 text-white py-4 rounded-full font-bold uppercase tracking-[0.3em] text-xs hover:bg-theme-900 hover:shadow-xl hover:shadow-theme-900/20 transition-all duration-300 group inline-flex justify-center items-center gap-3"
+            >
+              Generate Link
+            </button>
+          </div>
+        </form>
+
+        {generatedLink && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="mt-8 pt-8 border-t border-stone-200 space-y-4 overflow-hidden"
+          >
+            <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-600 ml-2 block">
+              Generated Invitation Link
+            </label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                readOnly
+                value={generatedLink}
+                className="w-full bg-theme-50 border border-theme-200 rounded-2xl px-4 py-3 text-stone-700 font-mono text-xs sm:text-sm select-all focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={copyToClipboard}
+                className={`sm:w-auto px-8 py-3 rounded-2xl font-bold uppercase tracking-[0.2em] text-xs transition-all duration-300 whitespace-nowrap flex items-center justify-center ${
+                  isCopied
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20"
+                    : "bg-theme-600 text-white hover:bg-theme-700 shadow-md shadow-theme-600/20"
+                }`}
+              >
+                {isCopied ? "Copied!" : "Copy Link"}
+              </button>
+            </div>
+            {isCopied && (
+              <p className="text-xs text-emerald-600 text-center font-medium animate-pulse">
+                Link successfully copied to clipboard!
+              </p>
+            )}
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Quick return to main site button */}
+      <div className="mt-4 relative z-10">
+        <a
+          href="/"
+          className="text-xs text-stone-500 hover:text-theme-700 transition-colors underline tracking-wider uppercase font-medium"
+        >
+          ← Return to Main Invitation
+        </a>
+      </div>
+    </main>
+  );
+}
+
 export default function WeddingInvitation() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
+  // Parse URL search params
+  const searchParams = new URLSearchParams(window.location.search);
+  const inviteeTitle = searchParams.get("title") || "";
+  const inviteeName = searchParams.get("guest") || "";
+  const initialRsvpName = inviteeName ? (inviteeTitle ? `${inviteeTitle} ${inviteeName}` : inviteeName) : "";
+
+  if (currentPath === '/admin') {
+    return <AdminPage />;
+  }
+
   const [isOpened, setIsOpened] = useState(false);
   const [isLowPerformanceMode, setIsLowPerformanceMode] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   // Form State
-  const [rsvpData, setRsvpData] = useState({ name: "", guests: "1", dietary: "" });
+  const [rsvpData, setRsvpData] = useState({ name: initialRsvpName, guests: "1", dietary: "" });
   const [wishData, setWishData] = useState({ name: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<null | "rsvp_success" | "wish_success" | "error">(null);
@@ -542,6 +736,44 @@ export default function WeddingInvitation() {
               </motion.div>
 
             </section>
+
+            {/* Personalized Guest Invitation Section */}
+            {inviteeName && (
+              <section className="py-16 md:py-24 bg-[#FFFBFD] relative border-b border-theme-100/40 flex flex-col items-center overflow-hidden z-20">
+                <div className="absolute inset-0 opacity-[0.03] paper-grain pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] aspect-square bg-theme-100 blur-[100px] rounded-full opacity-40 pointer-events-none" />
+                
+                <div className="container mx-auto px-4 max-w-3xl text-center relative z-10">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1 }}
+                    className="flex flex-col items-center"
+                  >
+                    <div className="flex items-center gap-4 mb-6 opacity-70">
+                      <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-theme-500" />
+                      <div className="w-1.5 h-1.5 rotate-45 bg-theme-600" />
+                      <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-theme-500" />
+                    </div>
+
+                    <p className="text-[10px] md:text-[12px] uppercase tracking-[0.6em] text-theme-500 font-bold mb-4">
+                      Cordially Invited
+                    </p>
+
+                    <h2 className="font-playball text-4xl sm:text-5xl md:text-7xl text-theme-900 my-4 leading-tight px-4 drop-shadow-sm">
+                      {inviteeTitle ? `${inviteeTitle} ${inviteeName}` : inviteeName}
+                    </h2>
+
+                    <p className="text-stone-600 text-sm md:text-base font-light tracking-wide max-w-lg mx-auto mt-4 leading-relaxed px-4">
+                      We joyfully request the pleasure of your company as we celebrate the beginning of our new life together.
+                    </p>
+
+                    <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-theme-400 to-transparent mt-8 opacity-60" />
+                  </motion.div>
+                </div>
+              </section>
+            )}
 
             {/* Wedding Details Section */}
             <section className="cv-auto py-24 md:py-32 w-full flex flex-col items-center px-4 relative">
