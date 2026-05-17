@@ -215,7 +215,9 @@ function AdminPage() {
   const [title, setTitle] = useState("Mr.");
   const [guestName, setGuestName] = useState("");
   const [generatedLink, setGeneratedLink] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
+  const [generatedFullName, setGeneratedFullName] = useState("");
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
+  const [isMessageCopied, setIsMessageCopied] = useState(false);
 
   const handleGenerate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -228,26 +230,34 @@ function AdminPage() {
     if (title) params.append("title", title);
     params.append("guest", guestName.trim());
 
+    const fullName = title ? `${title} ${guestName.trim()}` : guestName.trim();
+    setGeneratedFullName(fullName);
     setGeneratedLink(`${baseUrl}/?${params.toString()}`);
-    setIsCopied(false);
+    setIsLinkCopied(false);
+    setIsMessageCopied(false);
   };
 
-  const copyToClipboard = () => {
-    if (!generatedLink) return;
+  const generatedMessage = `Dear ${generatedFullName}❤️\n\nWith joyful hearts, we warmly invite you and your family to celebrate one of the most special days of our lives as we begin our journey together.\n\nPlease view our wedding invitation and all the event details through the link below:\n\n🌐 ${generatedLink}\n\nYour presence would truly mean the world to us, and we would be honored to celebrate this beautiful moment together.\n\nWith love,\n❤️ Randima & Tharushi`;
+
+  const copyText = (text: string, type: 'link' | 'message') => {
+    if (!text) return;
+    const setCopied = type === 'link' ? setIsLinkCopied : setIsMessageCopied;
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(generatedLink).then(() => {
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2500);
+      navigator.clipboard.writeText(text).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
       }).catch((err) => {
         console.error("Clipboard copy failed", err);
-        fallbackCopy(generatedLink);
+        fallbackCopy(text, type);
       });
     } else {
-      fallbackCopy(generatedLink);
+      fallbackCopy(text, type);
     }
   };
 
-  const fallbackCopy = (text: string) => {
+  const fallbackCopy = (text: string, type: 'link' | 'message') => {
+    const setCopied = type === 'link' ? setIsLinkCopied : setIsMessageCopied;
     const textArea = document.createElement("textarea");
     textArea.value = text;
     textArea.style.position = "fixed";
@@ -257,11 +267,11 @@ function AdminPage() {
     textArea.select();
     try {
       document.execCommand('copy');
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2500);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
     } catch (err) {
       console.error('Fallback copy error', err);
-      alert("Failed to copy link. Please select and copy the text manually.");
+      alert("Failed to copy. Please select and copy the text manually.");
     }
     document.body.removeChild(textArea);
   };
@@ -339,35 +349,69 @@ function AdminPage() {
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            className="mt-8 pt-8 border-t border-stone-200 space-y-4 overflow-hidden"
+            className="mt-8 pt-8 border-t border-stone-200 space-y-6 overflow-hidden text-left"
           >
-            <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-600 ml-2 block">
-              Generated Invitation Link
-            </label>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                readOnly
-                value={generatedLink}
-                className="w-full bg-theme-50 border border-theme-200 rounded-2xl px-4 py-3 text-stone-700 font-mono text-xs sm:text-sm select-all focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={copyToClipboard}
-                className={`sm:w-auto px-8 py-3 rounded-2xl font-bold uppercase tracking-[0.2em] text-xs transition-all duration-300 whitespace-nowrap flex items-center justify-center ${
-                  isCopied
-                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20"
-                    : "bg-theme-600 text-white hover:bg-theme-700 shadow-md shadow-theme-600/20"
-                }`}
-              >
-                {isCopied ? "Copied!" : "Copy Link"}
-              </button>
+            {/* Link Section */}
+            <div className="space-y-3">
+              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-600 ml-2 block">
+                Generated Invitation Link
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  readOnly
+                  value={generatedLink}
+                  className="w-full bg-theme-50 border border-theme-200 rounded-2xl px-4 py-3 text-stone-700 font-mono text-xs sm:text-sm select-all focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => copyText(generatedLink, 'link')}
+                  className={`sm:w-auto px-8 py-3 rounded-2xl font-bold uppercase tracking-[0.2em] text-xs transition-all duration-300 whitespace-nowrap flex items-center justify-center ${
+                    isLinkCopied
+                      ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20"
+                      : "bg-theme-600 text-white hover:bg-theme-700 shadow-md shadow-theme-600/20"
+                  }`}
+                >
+                  {isLinkCopied ? "Copied!" : "Copy Link"}
+                </button>
+              </div>
+              {isLinkCopied && (
+                <p className="text-xs text-emerald-600 text-center font-medium animate-pulse">
+                  Link successfully copied to clipboard!
+                </p>
+              )}
             </div>
-            {isCopied && (
-              <p className="text-xs text-emerald-600 text-center font-medium animate-pulse">
-                Link successfully copied to clipboard!
-              </p>
-            )}
+
+            {/* Full Message Section */}
+            <div className="space-y-3 pt-4 border-t border-stone-100">
+              <div className="flex items-center justify-between ml-2 mb-1">
+                <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-600 block">
+                  Full Invitation Message
+                </label>
+                <button
+                  type="button"
+                  onClick={() => copyText(generatedMessage, 'message')}
+                  className={`px-6 py-2.5 rounded-2xl font-bold uppercase tracking-[0.2em] text-xs transition-all duration-300 whitespace-nowrap flex items-center justify-center ${
+                    isMessageCopied
+                      ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20"
+                      : "bg-theme-800 text-white hover:bg-theme-900 shadow-md shadow-theme-800/20"
+                  }`}
+                >
+                  {isMessageCopied ? "Copied!" : "Copy Message"}
+                </button>
+              </div>
+              <textarea
+                readOnly
+                rows={13}
+                value={generatedMessage}
+                className="w-full bg-theme-50 border border-theme-200 rounded-2xl p-4 text-stone-700 font-sans text-xs sm:text-sm select-all focus:outline-none leading-relaxed resize-none"
+              />
+              {isMessageCopied && (
+                <p className="text-xs text-emerald-600 text-center font-medium animate-pulse">
+                  Full message successfully copied to clipboard!
+                </p>
+              )}
+            </div>
           </motion.div>
         )}
       </motion.div>
